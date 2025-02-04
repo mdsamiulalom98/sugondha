@@ -10,7 +10,7 @@
                 <div class="particles"></div>
             </div>
             <h2 class="mb-2">Congratulations!</h2>
-            <p>Thanks, you scored <strong>{{$results}}</strong> points out of <strong>{{$totalPossiblePoints}}</strong>. You get <strong>{{$results}}</strong>% discount!</p>
+            <p>Thanks, you scored <strong>{{$data->gain_mark}}</strong> points out of <strong>{{$data->total_mark}}</strong>. You get <strong>{{$data->discount}}</strong>% discount!</p>
             <div class="button-groups mt-3">
                 <a href="{{route('home')}}" class="btn continue-shopping">Go to home page</a href="{{route('home')}}">
             </div>

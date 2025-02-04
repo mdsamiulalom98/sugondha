@@ -21,8 +21,8 @@
         <!-- toastr css -->
         <link rel="stylesheet" href="{{asset('public/backEnd/')}}/assets/css/toastr.min.css" />
         <link rel="stylesheet" href="{{asset('public/frontEnd/css/wsit-menu.css')}}" />
-        <link rel="stylesheet" href="{{asset('public/frontEnd/css/style.css')}}" />
-        <link rel="stylesheet" href="{{asset('public/frontEnd/css/responsive.css')}}" />
+        <link rel="stylesheet" href="{{asset('public/frontEnd/css/style.css?v=1.0.0')}}" />
+        <link rel="stylesheet" href="{{asset('public/frontEnd/css/responsive.css?v=1.0.0')}}" />
         <script src="{{asset('public/frontEnd/js/jquery-3.7.1.min.js')}}"></script>
         @foreach($pixels as $pixel)
         <!-- Facebook Pixel Code -->
@@ -449,7 +449,7 @@
         </div>
 
         <!-- /. fixed sidebar -->
-        
+
         <div id="custom-modal"></div>
         <div id="page-overlay"></div>
         <div id="page-overlays"></div>
@@ -481,14 +481,14 @@
                     popup.style.display = 'flex';
                     body.style.overflow = 'hidden';
                 }, 2000);
-            
+
                 closePopup.addEventListener('click', () => {
-                    popup.style.display = 'none'; 
+                    popup.style.display = 'none';
                 });
             });
 
         </script>
-       
+
 
 
         <script src="{{asset('public/backEnd/')}}/assets/js/toastr.min.js"></script>
@@ -731,7 +731,7 @@
                 $("#page-overlay").show();
                 $(".feature-products").addClass("active");
             });
-            
+
             $(".search_toggle").on("click", function () {
                 $("#page-overlay").show();
                 $(".search_inner").addClass("active");
@@ -741,7 +741,7 @@
                 $("#page-overlay").hide();
                 $(".search_inner").removeClass("active");
             });
-            
+
            $(".search_toggles").on("click", function () {
                 if ($(".mobile__search__sec").hasClass("active")) {
                     $(".mobile__search__sec").removeClass("active");

@@ -62,9 +62,12 @@ Route::post('/customer/coupon-remove', [CustomerController::class, 'coupon_remov
 
 Route::get('barcodess', [ProductController::class, 'barcodess'])->name('barcodess.update');
 
-Route::group(['namespace' => 'Frontend', 'middleware' => ['ipcheck', 'check_refer','customer']], function () {
-Route::post('claim-exam-start', [FrontendController::class, 'claimExam'])->name('mcq.exam.start');
-
+Route::group(['namespace' => 'Frontend', 'middleware' => ['ipcheck', 'check_refer', 'customer']], function () {
+    Route::post('claim-exam-start', [FrontendController::class, 'claimExam'])->name('mcq.exam.start');
+    Route::get('/show-question', [FrontendController::class, 'showQuestion'])->name('show.question');
+    Route::post('/next-question', [FrontendController::class, 'nextQuestion'])->name('next.question');
+    // web.php
+    Route::post('/check-answer', [FrontendController::class, 'checkAnswer'])->name('check.answer');
     Route::get('/', [FrontendController::class, 'index'])->name('home');
     Route::get('category/{category}', [FrontendController::class, 'category'])->name('category');
     Route::get('subcategory/{subcategory}', [FrontendController::class, 'subcategory'])->name('subcategory');
@@ -124,13 +127,14 @@ Route::group(['prefix' => 'customer', 'namespace' => 'Frontend', 'middleware' =>
 
     Route::post('/order-save', [CustomerController::class, 'order_save'])->name('customer.ordersave');
     Route::post('/exam-validation', [CustomerController::class, 'validateExam'])->name('exam.validation');
+    Route::get('result-success', [CustomerController::class, 'result_success'])->name('result.success');
     Route::get('/exam-success', [CustomerController::class, 'successExam'])->name('exam.success');
 
     Route::get('/clear-claim-discount', [CustomerController::class, 'clearClaimDiscount'])->name('clearClaimDiscount');
 
-    
+
     Route::get('/order-save-draft', [CustomerController::class, 'order_save_draft'])->name('order.store.draft');
-    
+
     Route::get('/order-success/{id}', [CustomerController::class, 'order_success'])->name('customer.order_success');
     Route::get('/order-track', [CustomerController::class, 'order_track'])->name('customer.order_track');
     Route::get('/order-track/result', [CustomerController::class, 'order_track_result'])->name('customer.order_track_result');
@@ -148,7 +152,7 @@ Route::group(['prefix' => 'customer', 'namespace' => 'Frontend', 'middleware' =>
     Route::post('/profile-update', [CustomerController::class, 'profile_update'])->name('customer.profile_update');
     Route::get('/change-password', [CustomerController::class, 'change_pass'])->name('customer.change_pass');
     Route::post('/password-update', [CustomerController::class, 'password_update'])->name('customer.password_update');
-    
+
 });
 
 Route::group(['namespace' => 'Frontend', 'middleware' => ['ipcheck', 'check_refer']], function () {
@@ -159,7 +163,7 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['ipcheck', 'check_refe
     Route::get('/payment-success', [ShurjopayControllers::class, 'payment_success'])->name('payment_success');
     Route::get('/payment-cancel', [ShurjopayControllers::class, 'payment_cancel'])->name('payment_cancel');
 });
-    
+
 // unathenticate admin route
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['customer', 'ipcheck', 'check_refer']], function () {
     Route::get('locked', [DashboardController::class, 'locked'])->name('locked');
@@ -392,7 +396,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth', 'lock', 'check_re
     Route::get('products/update-feature', [ProductController::class, 'update_feature'])->name('products.update_feature');
     Route::get('products/update-status', [ProductController::class, 'update_status'])->name('products.update_status');
     Route::post('products/barcode-update', [ProductController::class, 'barcode_update'])->name('products.barcode_update');
-    Route::get('products/barcode', [ProductController::class,'barcode'])->name('products.barcode');
+    Route::get('products/barcode', [ProductController::class, 'barcode'])->name('products.barcode');
     Route::get('products/purchase-create', [ProductController::class, 'purchase_create'])->name('products.purchase_create');
     Route::post('products/purchase-store', [ProductController::class, 'purchase_store'])->name('products.purchase_store');
     Route::get('products/purchase-list', [ProductController::class, 'purchase_list'])->name('products.purchase');
@@ -483,8 +487,8 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth', 'lock', 'check_re
     Route::get('order/cart-details', [OrderController::class, 'cart_details'])->name('admin.order.cart_details');
     Route::get('order/cart-shipping', [OrderController::class, 'cart_shipping'])->name('admin.order.cart_shipping');
     Route::get('order/cart-clear', [OrderController::class, 'cart_clear'])->name('admin.order.cart_clear');
-    
-    Route::get('order/slip/{invoice_id}', [OrderController::class,'slip'])->name('admin.order.slip');
+
+    Route::get('order/slip/{invoice_id}', [OrderController::class, 'slip'])->name('admin.order.slip');
 
     // Order route
     Route::get('order/{slug}', [OrderController::class, 'index'])->name('admin.orders');
@@ -518,18 +522,18 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth', 'lock', 'check_re
     Route::get('review/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::post('review/update', [ReviewController::class, 'update'])->name('reviews.update');
     Route::post('review/destroy', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-    
+
     // Newsticker
-    Route::get('newsticker/manage', [NewsStikerController::class,'index'])->name('newsticker.index');
-    Route::get('newsticker/{id}/show', [NewsStikerController::class,'show'])->name('newsticker.show');
-    Route::get('newsticker/create', [NewsStikerController::class,'create'])->name('newsticker.create');
-    Route::post('newsticker/save', [NewsStikerController::class,'store'])->name('newsticker.store');
-    Route::get('newsticker/{id}/edit', [NewsStikerController::class,'edit'])->name('newsticker.edit');
-    Route::post('newsticker/update', [NewsStikerController::class,'update'])->name('newsticker.update');
-    Route::post('newsticker/inactive', [NewsStikerController::class,'inactive'])->name('newsticker.inactive');
-    Route::post('newsticker/active', [NewsStikerController::class,'active'])->name('newsticker.active');
-    Route::post('newsticker/destroy', [NewsStikerController::class,'destroy'])->name('newsticker.destroy');
-    
+    Route::get('newsticker/manage', [NewsStikerController::class, 'index'])->name('newsticker.index');
+    Route::get('newsticker/{id}/show', [NewsStikerController::class, 'show'])->name('newsticker.show');
+    Route::get('newsticker/create', [NewsStikerController::class, 'create'])->name('newsticker.create');
+    Route::post('newsticker/save', [NewsStikerController::class, 'store'])->name('newsticker.store');
+    Route::get('newsticker/{id}/edit', [NewsStikerController::class, 'edit'])->name('newsticker.edit');
+    Route::post('newsticker/update', [NewsStikerController::class, 'update'])->name('newsticker.update');
+    Route::post('newsticker/inactive', [NewsStikerController::class, 'inactive'])->name('newsticker.inactive');
+    Route::post('newsticker/active', [NewsStikerController::class, 'active'])->name('newsticker.active');
+    Route::post('newsticker/destroy', [NewsStikerController::class, 'destroy'])->name('newsticker.destroy');
+
     // flavor  route
     Route::get('shipping-charge/manage', [ShippingChargeController::class, 'index'])->name('shippingcharges.index');
     Route::get('shipping-charge/create', [ShippingChargeController::class, 'create'])->name('shippingcharges.create');
@@ -539,12 +543,12 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth', 'lock', 'check_re
     Route::post('shipping-charge/inactive', [ShippingChargeController::class, 'inactive'])->name('shippingcharges.inactive');
     Route::post('shipping-charge/active', [ShippingChargeController::class, 'active'])->name('shippingcharges.active');
     Route::post('shipping-charge/destroy', [ShippingChargeController::class, 'destroy'])->name('shippingcharges.destroy');
-    
+
     // district routes
-    Route::get('district/manage', [DistrictController::class,'index'])->name('districts.index');
-    Route::get('district/{id}/edit', [DistrictController::class,'edit'])->name('districts.edit');
-    Route::post('district/update', [DistrictController::class,'update'])->name('districts.update');
-    Route::post('district/charge-update', [DistrictController::class,'district_charge'])->name('districts.charge');
+    Route::get('district/manage', [DistrictController::class, 'index'])->name('districts.index');
+    Route::get('district/{id}/edit', [DistrictController::class, 'edit'])->name('districts.edit');
+    Route::post('district/update', [DistrictController::class, 'update'])->name('districts.update');
+    Route::post('district/charge-update', [DistrictController::class, 'district_charge'])->name('districts.charge');
 
     // backend customer route
     Route::get('customer', [CustomerManageController::class, 'index'])->name('customers.index');

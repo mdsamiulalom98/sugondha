@@ -36,10 +36,10 @@ use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
-   
+
     function __construct()
     {
-        $this->middleware('customer', ['except' => ['examValidation','order_save_draft','register', 'customer_coupon', 'coupon_remove', 'store', 'verify', 'resendotp', 'account_verify', 'login', 'signin', 'logout', 'checkout', 'forgot_password', 'forgot_verify', 'forgot_reset', 'forgot_store', 'forgot_resend', 'order_save', 'order_success', 'order_track', 'order_track_result']]);
+        $this->middleware('customer', ['except' => ['examValidation', 'order_save_draft', 'register', 'customer_coupon', 'coupon_remove', 'store', 'verify', 'resendotp', 'account_verify', 'login', 'signin', 'logout', 'checkout', 'forgot_password', 'forgot_verify', 'forgot_reset', 'forgot_store', 'forgot_resend', 'order_save', 'order_success', 'order_track', 'order_track_result']]);
     }
     public function customer_coupon(Request $request)
     {
@@ -57,7 +57,7 @@ class CustomerController extends Controller
                 if ($totalcart >= $findcoupon->buy_amount) {
                     if ($totalcart >= $findcoupon->buy_amount) {
                         if ($findcoupon->offer_type == 1) {
-                            $discountammount =  (($totalcart * $findcoupon->amount) / 100);
+                            $discountammount = (($totalcart * $findcoupon->amount) / 100);
                             Session::forget('coupon_amount');
                             Session::put('coupon_amount', $discountammount);
                             Session::put('coupon_used', $findcoupon->coupon_code);
@@ -95,14 +95,14 @@ class CustomerController extends Controller
         ]);
 
         // data save
-        $review              =   new Review();
-        $review->name        =   Auth::guard('customer')->user()->name ? Auth::guard('customer')->user()->name : 'N / A';
-        $review->email       =   Auth::guard('customer')->user()->email ? Auth::guard('customer')->user()->email : 'N / A';
-        $review->product_id  =   $request->product_id;
-        $review->review      =   $request->review;
-        $review->ratting     =   $request->ratting;
-        $review->customer_id =   Auth::guard('customer')->user()->id;
-        $review->status      =   'pending';
+        $review = new Review();
+        $review->name = Auth::guard('customer')->user()->name ? Auth::guard('customer')->user()->name : 'N / A';
+        $review->email = Auth::guard('customer')->user()->email ? Auth::guard('customer')->user()->email : 'N / A';
+        $review->product_id = $request->product_id;
+        $review->review = $request->review;
+        $review->ratting = $request->ratting;
+        $review->customer_id = Auth::guard('customer')->user()->id;
+        $review->status = 'pending';
         $review->save();
 
         Toastr::success('Thanks, Your review send successfully', 'Success!');
@@ -120,7 +120,7 @@ class CustomerController extends Controller
         if ($auth_check) {
             if (Auth::guard('customer')->attempt(['phone' => $request->phone, 'password' => $request->password])) {
                 Toastr::success('You are login successfully', 'success!');
-                if($request->review == 1){
+                if ($request->review == 1) {
                     return redirect()->back();
                 }
                 if (Cart::instance('shopping')->count() > 0) {
@@ -145,45 +145,45 @@ class CustomerController extends Controller
     {
         // return $request->all();
         $this->validate($request, [
-            'name'    => 'required',
-            'phone'    => 'required|unique:customers',
+            'name' => 'required',
+            'phone' => 'required|unique:customers',
             'password' => 'required|min:6'
         ]);
 
         $image = $request->file('image');
-        if($image){
-            $name =  time().'-'.$image->getClientOriginalName();
-            $name = preg_replace('"\.(jpg|jpeg|png|webp)$"', '.webp',$name);
+        if ($image) {
+            $name = time() . '-' . $image->getClientOriginalName();
+            $name = preg_replace('"\.(jpg|jpeg|png|webp)$"', '.webp', $name);
             $name = strtolower(preg_replace('/\s+/', '-', $name));
             $uploadpath = 'public/uploads/customer/';
-            $imageUrl = $uploadpath.$name; 
-            $img=Image::make($image->getRealPath());
+            $imageUrl = $uploadpath . $name;
+            $img = Image::make($image->getRealPath());
             $img->encode('webp', 90);
             $width = 120;
             $height = 120;
-            $img->height() > $img->width() ? $width=null : $height=null;
+            $img->height() > $img->width() ? $width = null : $height = null;
             $img->resize($width, $height, function ($constraint) {
                 $constraint->aspectRatio();
             });
-            $img->save($imageUrl); 
-        }else{
+            $img->save($imageUrl);
+        } else {
             $imageUrl = NULL;
         }
 
         $last_id = Customer::orderBy('id', 'desc')->first();
         $last_id = $last_id ? $last_id->id + 1 : 1;
-        $store              = new Customer();
-        $store->name        = $request->name;
-        $store->slug        = strtolower(Str::slug($request->name . '-' . $last_id));
-        $store->phone       = $request->phone;
-        $store->email       = $request->email;
-        $store->profession  = $request->profession;
-        $store->dob         = $request->dob;
-        $store->password    = bcrypt($request->password);
-        $store->verify      = 1;
-        $store->status      = 'active';
+        $store = new Customer();
+        $store->name = $request->name;
+        $store->slug = strtolower(Str::slug($request->name . '-' . $last_id));
+        $store->phone = $request->phone;
+        $store->email = $request->email;
+        $store->profession = $request->profession;
+        $store->dob = $request->dob;
+        $store->password = bcrypt($request->password);
+        $store->verify = 1;
+        $store->status = 'active';
 
-      
+
         $store['image'] = $imageUrl;
         $store->save();
 
@@ -314,7 +314,8 @@ class CustomerController extends Controller
         if (!Session::get('verify_phone')) {
             Toastr::error('Something wrong please try again');
             return redirect()->route('customer.forgot.password');
-        };
+        }
+        ;
         return view('frontEnd.layouts.customer.forgot_reset');
     }
     public function forgot_store(Request $request)
@@ -355,29 +356,16 @@ class CustomerController extends Controller
         Session::put('shipping', $select_charge->amount);
         $districts = District::distinct()->select('district')->orderBy('district', 'asc')->get();
 
-        $subjects = mcqSubject::where('status',1)->orderBy('id','DESC')->get();
-        return view('frontEnd.layouts.customer.checkout', compact('shippingcharge', 'bkash_gateway','shurjopay_gateway', 'districts','subjects'));
+        $subjects = mcqSubject::where('status', 1)->orderBy('id', 'DESC')->get();
+        return view('frontEnd.layouts.customer.checkout', compact('shippingcharge', 'bkash_gateway', 'shurjopay_gateway', 'districts', 'subjects'));
     }
 
-   public function validateExam(Request $request)
+    public function validateExam(Request $request)
     {
-        $questions = $request->input('questions');
-        $results = 0;
+        $questions = Session::get('questions');
+        $totalPossiblePoints = count($questions) * 2;
 
-        $mcqQuestions = MCQ::whereIn('id', array_column($questions, 'id'))->get()->keyBy('id');
-
-        foreach ($questions as $question) {
-
-            $mcqQuestion = $mcqQuestions[$question['id']] ?? null;
-
-            if ($mcqQuestion && $mcqQuestion->right_option === $question['answer']) {
-                $results += 2; 
-            }
-        }
-
-        $totalPossiblePoints = count($mcqQuestions) * 2;
-
-  
+        $results = Session::get('result', 0);
         $store_data = new ExamResult();
         $store_data->customer_id = Auth::guard('customer')->user()->id;
         $store_data->exam_id = 1;
@@ -385,20 +373,25 @@ class CustomerController extends Controller
         $store_data->gain_mark = $results;
         $store_data->discount = $results;
         $store_data->save();
-        
-        Toastr::success("Thanks, you scored $results points out of $totalPossiblePoints. You get $results% discount!");
 
+        Session::forget('result');
+        Session::forget('questions');
         Session::put('claim_discounts', $results);
-        return view('frontEnd.layouts.pages.success',compact('totalPossiblePoints','results'));
+        $message = "Thanks, you scored $results points out of $totalPossiblePoints. You get $results% discount!";
+        return response()->json(['success' => true, 'message' => $message, 'data' => $store_data]);
+    }
+    public function result_success(Request $request)
+    {
+        $data = ExamResult::where('id', $request->id)->first();
+        return view('frontEnd.layouts.pages.success', compact('data'));
+    }
+    public function clearClaimDiscount(Request $request)
+    {
+        Session::forget('claim_discount');
+        return response()->json(['success' => true]);
     }
 
-     public function clearClaimDiscount(Request $request)
-        {
-            Session::forget('claim_discount');
-            return response()->json(['success' => true]);
-        }
 
-    
     public function order_save(Request $request)
     {
         $this->validate($request, [
@@ -406,17 +399,17 @@ class CustomerController extends Controller
             'phone' => 'required',
             'address' => 'required',
         ]);
-        
+
         if (Cart::instance('shopping')->count() <= 0) {
             Toastr::error('Your shopping empty', 'Failed!');
-             return redirect()->back();
+            return redirect()->back();
         }
 
         $subtotal = Cart::instance('shopping')->subtotal();
         $subtotal = str_replace(',', '', $subtotal);
         $subtotal = str_replace('.00', '', $subtotal);
         $discount = Session::get('discount') + Session::get('coupon_amount');
-        $shipping_area  = ShippingCharge::where('id', $request->area)->first();
+        $shipping_area = ShippingCharge::where('id', $request->area)->first();
         if (Auth::guard('customer')->user()) {
             $customer_id = Auth::guard('customer')->user()->id;
         } else {
@@ -425,63 +418,63 @@ class CustomerController extends Controller
                 $customer_id = $exits_customer->id;
             } else {
                 $password = rand(111111, 999999);
-                $store              = new Customer();
-                $store->name        = $request->name;
-                $store->slug        = $request->name;
-                $store->phone       = $request->phone;
-                $store->password    = bcrypt($password);
-                $store->verify      = 1;
-                $store->status      = 'active';
+                $store = new Customer();
+                $store->name = $request->name;
+                $store->slug = $request->name;
+                $store->phone = $request->phone;
+                $store->password = bcrypt($password);
+                $store->verify = 1;
+                $store->status = 'active';
                 $store->save();
                 $customer_id = $store->id;
             }
         }
         // order data save
-        $order                   = new Order();
-        $order->invoice_id       = rand(11111, 99999);
-        $order->amount           = ($subtotal + $shipping_area->amount) - $discount;
-        $order->discount         = $discount ? $discount : 0;
-        $order->shipping_charge  = $shipping_area->amount;
-        $order->customer_id      = $customer_id;
-        $order->customer_ip      = $request->ip();
-        $order->order_type       = Session::get('free_shipping') ? 'digital' : 'goods';
-        $order->order_status     = 10;
-        $order->note             = $request->note??'';
+        $order = new Order();
+        $order->invoice_id = rand(11111, 99999);
+        $order->amount = ($subtotal + $shipping_area->amount) - $discount;
+        $order->discount = $discount ? $discount : 0;
+        $order->shipping_charge = $shipping_area->amount;
+        $order->customer_id = $customer_id;
+        $order->customer_ip = $request->ip();
+        $order->order_type = Session::get('free_shipping') ? 'digital' : 'goods';
+        $order->order_status = 10;
+        $order->note = $request->note ?? '';
         $order->save();
 
         // shipping data save
-        $shipping              =   new Shipping();
-        $shipping->order_id    =   $order->id;
-        $shipping->customer_id =   $customer_id;
-        $shipping->name        =   $request->name;
-        $shipping->phone       =   $request->phone;
-        $shipping->address     =   $request->address;
-        $shipping->area        =   $shipping_area ? $shipping_area->name : 'Free Shipping';
+        $shipping = new Shipping();
+        $shipping->order_id = $order->id;
+        $shipping->customer_id = $customer_id;
+        $shipping->name = $request->name;
+        $shipping->phone = $request->phone;
+        $shipping->address = $request->address;
+        $shipping->area = $shipping_area ? $shipping_area->name : 'Free Shipping';
         $shipping->save();
 
         // payment data save
-        $payment                 = new Payment();
-        $payment->order_id       = $order->id;
-        $payment->customer_id    = $customer_id;
+        $payment = new Payment();
+        $payment->order_id = $order->id;
+        $payment->customer_id = $customer_id;
         $payment->payment_method = $request->payment_method;
-        $payment->amount         = $order->amount;
+        $payment->amount = $order->amount;
         $payment->payment_status = 'pending';
         $payment->save();
 
         // order details data save
         foreach (Cart::instance('shopping')->content() as $cart) {
             // return $cart;
-            $order_details                  =   new OrderDetails();
-            $order_details->order_id        =   $order->id;
-            $order_details->product_id      =   $cart->id;
-            $order_details->product_name    =   $cart->name;
-            $order_details->sale_price      =   $cart->price;
-            $order_details->purchase_price  =   $cart->options->purchase_price;
-            $order_details->product_color   =   $cart->options->product_color;
-            $order_details->product_size    =   $cart->options->product_size;
-            $order_details->product_size    =   $cart->options->product_size;
-            $order_details->product_type    =   $cart->options->type;
-            $order_details->qty             =   $cart->qty;
+            $order_details = new OrderDetails();
+            $order_details->order_id = $order->id;
+            $order_details->product_id = $cart->id;
+            $order_details->product_name = $cart->name;
+            $order_details->sale_price = $cart->price;
+            $order_details->purchase_price = $cart->options->purchase_price;
+            $order_details->product_color = $cart->options->product_color;
+            $order_details->product_size = $cart->options->product_size;
+            $order_details->product_size = $cart->options->product_size;
+            $order_details->product_type = $cart->options->type;
+            $order_details->qty = $cart->qty;
             $order_details->save();
         }
         Cart::instance('shopping')->destroy();
@@ -489,7 +482,7 @@ class CustomerController extends Controller
         Session::forget('free_shipping');
         Session::put('purchase_event', 'true');
         Toastr::success('Thanks, Your order place successfully', 'Success!');
-        
+
         $site_setting = GeneralSetting::where('status', 1)->first();
         $sms_gateway = SmsGateway::where(['status' => 1, 'order' => '1'])->first();
         if ($sms_gateway) {
@@ -521,7 +514,7 @@ class CustomerController extends Controller
                 'discsount_amount' => 0,
                 'disc_percent' => 0,
                 'client_ip' => $request->ip(),
-                'customer_name' =>  $request->name,
+                'customer_name' => $request->name,
                 'customer_phone' => $request->phone,
                 'email' => "customer@gmail.com",
                 'customer_address' => $request->address,
@@ -537,7 +530,7 @@ class CustomerController extends Controller
             return redirect('customer/order-success/' . $order->id);
         }
     }
-    
+
 
     public function orders()
     {
@@ -555,7 +548,7 @@ class CustomerController extends Controller
 
         $orders = Order::where(['id' => $request->id, 'customer_id' => Auth::guard('customer')->user()->id])->with('orderdetails')->first();
         // return $orders;
-        return view('frontEnd.layouts.customer.invoice', compact('order','orders'));
+        return view('frontEnd.layouts.customer.invoice', compact('order', 'orders'));
     }
     public function pdfreader(Request $request)
     {
@@ -563,10 +556,10 @@ class CustomerController extends Controller
 
         $orders = Order::where(['id' => $request->id, 'customer_id' => Auth::guard('customer')->user()->id])->with('orderdetails')->first();
         // return $orders;
-        return view('frontEnd.layouts.customer.pdfreader', compact('order','orders'));
+        return view('frontEnd.layouts.customer.pdfreader', compact('order', 'orders'));
     }
-    
-    
+
+
     public function order_note(Request $request)
     {
         $order = Order::where(['id' => $request->id, 'customer_id' => Auth::guard('customer')->user()->id])->firstOrFail();
@@ -586,7 +579,7 @@ class CustomerController extends Controller
         $image = $request->file('image');
         if ($image) {
             // image with intervention
-            $name =  time() . '-' . $image->getClientOriginalName();
+            $name = time() . '-' . $image->getClientOriginalName();
             $name = preg_replace('"\.(jpg|jpeg|png|webp)$"', '.webp', $name);
             $name = strtolower(Str::slug($name));
             $uploadpath = 'public/uploads/customer/';
@@ -601,15 +594,15 @@ class CustomerController extends Controller
             $imageUrl = $update_data->image;
         }
 
-        $update_data->name        =   $request->name;
-        $update_data->phone       =   $request->phone;
-        $update_data->email       =   $request->email;
-        $update_data->address     =   $request->address;
-        $update_data->district    =   $request->district;
-        $update_data->area        =   $request->area;
-        $update_data->dob         =   $request->dob;
-        $update_data->profession  =   $request->profession;
-        $update_data->image       =   $imageUrl;
+        $update_data->name = $request->name;
+        $update_data->phone = $request->phone;
+        $update_data->email = $request->email;
+        $update_data->address = $request->address;
+        $update_data->district = $request->district;
+        $update_data->area = $request->area;
+        $update_data->dob = $request->dob;
+        $update_data->profession = $request->profession;
+        $update_data->image = $imageUrl;
         $update_data->save();
 
         Toastr::success('Your profile update successfully', 'Success!');
